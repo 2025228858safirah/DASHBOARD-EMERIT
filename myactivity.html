@@ -221,24 +221,51 @@
         document.getElementById('mainContent').style.marginLeft = (window.innerWidth>=992 && !sidebar.classList.contains('hidden')) ? '280px' : '0';
     };
 
+    // DARK MODE - PERSISTENT (load from localStorage)
     const darkToggle = document.getElementById('toggleDarkModeBtn');
     const darkIcon = document.getElementById('darkModeIcon');
-    if(localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
-        darkIcon.classList.replace('bi-moon-stars-fill','bi-sun-fill');
-    }
-    darkToggle.onclick = () => {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
+
+    function applyDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            darkIcon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
+        } else {
+            document.body.classList.remove('dark-mode');
+            darkIcon.classList.replace('bi-sun-fill', 'bi-moon-stars-fill');
+        }
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        darkIcon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+    }
+
+    // Load saved theme on page load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        applyDarkMode(true);
+    } else {
+        // ensure light mode (default)
+        applyDarkMode(false);
+    }
+
+    darkToggle.onclick = () => {
+        const isCurrentlyDark = document.body.classList.contains('dark-mode');
+        applyDarkMode(!isCurrentlyDark);
     };
 
-    function handleLogout() { if(confirm('Are you sure you want to logout?')) { localStorage.clear(); window.location.href = 'index.html'; } }
+    // LOGOUT - FIXED: Keep theme preference, clear only session data
+    function handleLogout() {
+        if(confirm('Are you sure you want to logout?')) {
+            // IMPORTANT: Do NOT remove theme from localStorage
+            localStorage.removeItem('studentName');
+            localStorage.removeItem('studentId');
+            localStorage.removeItem('isLoggedIn');
+            // theme stays
+            window.location.href = 'index.html';
+        }
+    }
     document.getElementById('logoutSidebarBtn').onclick = handleLogout;
     document.getElementById('topbarLogoutBtn').onclick = (e) => { e.preventDefault(); handleLogout(); };
     document.getElementById('currentYear').innerText = new Date().getFullYear();
 
+    // Initial render
     updateStats();
     renderTable(activitiesData);
 </script>
