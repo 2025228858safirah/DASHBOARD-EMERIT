@@ -15,7 +15,6 @@
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     
-  
     <style>
         body.login-page {
             background: transparent !important;
@@ -38,7 +37,6 @@
                 <p class="login-subtitle">Student Merit System</p>
             </div>
            
-    
             <form id="loginForm">
                 <div class="form-group">
                     <label><i class="bi bi-person-badge-fill me-1"></i> STUDENT ID</label>
@@ -82,7 +80,21 @@
 <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js"></script>
 
 <script>
-    // Vanta  background 
+    // ========== PERSISTENT DARK MODE ON LOGIN PAGE ==========
+    // Apply saved theme BEFORE Vanta runs to avoid flicker
+    function applyLoginDarkMode() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+    
+    // Apply immediately
+    applyLoginDarkMode();
+    
+    // Vanta Fog background (after theme is applied)
     VANTA.FOG({
         el: "body",
         mouseControls: true,
@@ -148,7 +160,7 @@
         }
     }
 
-    //CLEAR ERROR MESSAGE
+    // CLEAR ERROR MESSAGE
     document.getElementById('studentId').addEventListener('input', () => {
         document.getElementById('errorMessage').classList.remove('show');
     });
@@ -156,7 +168,7 @@
         document.getElementById('errorMessage').classList.remove('show');
     });
     
-    // USE ENTER KEY TO LOGIN FUNCTION
+    // USE ENTER KEY TO LOGIN
     document.getElementById('password').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleLogin();
     });
